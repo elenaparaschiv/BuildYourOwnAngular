@@ -4,13 +4,22 @@ This repository contains the AngularJS implementation built during the course of
 
 ## Code
 
-To make following along easier, commits are ordered to match the order of events in the book. Each commit message references the corresponding section title in the book. Note that this means the history of this repository may change as the book is revised.
+```
 
-There is also a tag for each chapter, pointing to the state of the codebase at the end of that chapter.
+## Chapter 1.1: $watch and $digest
+**Watch**
+Definition: with $watch you can attach a watcher to a scope.
+        A watcher is something that is notified when a change occurs on the scope
 
-## Errata
+Watcher Signature: To create it, call $watch() with 2 arguments:
+            > a watch func, which specifices the piece of data you're interested in.
+            > a listener func, which will be called whenever data changes.
 
-The [Issues](https://github.com/teropa/build-your-own-angularjs/issues) setion of this repository contains the book's errata. 
-
-If you find bugs, typos, mistakes, or other issues that should be improved, I would love to hear about it. See [CONTRIBUTING.md](CONTRIBUTING.md).
-
+!Note: As Angular user, you specify **watch expression** instead, like "user.firstName", which
+is specify in a data binding, a directive attribute or in JS code. It is parsed and compiled
+into a watch func by Angular internally.
+--------------------------
+**Digest**
+$digest function iterates over all watchers attached to scope, and runs their watch and listener func
+accordingly.
+```
