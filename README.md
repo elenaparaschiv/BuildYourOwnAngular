@@ -6,20 +6,23 @@ This repository contains the AngularJS implementation built during the course of
 
 ```
 
-## Chapter 1.1: $watch and $digest
-**Watch**
-Definition: with $watch you can attach a watcher to a scope.
-        A watcher is something that is notified when a change occurs on the scope
+## Chapter 1.2
+__Checking for Dirty Values__
+Inside the watch func we pass in the scope
+  > watch: func(scope) {}
+Why? For accessability Watch func returns the data we are interested in.That data is usually on the scope
 
-Watcher Signature: To create it, call $watch() with 2 arguments:
-            > a watch func, which specifices the piece of data you're interested in.
-            > a listener func, which will be called whenever data changes.
+The job of the $digest function:
+  call the watch function and compare its return value to whatever the same function returned last time.
+    > if the values differ, the watcher is dirty and its listener function should be called.
 
-!Note: As Angular user, you specify **watch expression** instead, like "user.firstName", which
-is specify in a data binding, a directive attribute or in JS code. It is parsed and compiled
-into a watch func by Angular internally.
---------------------------
-**Digest**
-$digest function iterates over all watchers attached to scope, and runs their watch and listener func
-accordingly.
+// a new this case
+https://alistapart.com/article/getoutbindingsituations
+Gains: "binding loss"
+ How :referencing a method, i.e. var fx = john.greet; fx("whatever")
+ Troubles: the method loses its implicit binding and this goes back to the default window case.
+
+
+
+
 ```
