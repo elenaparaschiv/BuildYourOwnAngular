@@ -30,6 +30,7 @@ describe('Scope', function() {
       expect(listenerFn).toHaveBeenCalled();
     });
 
+
     it('calls the watch function with the scope as the argument', function() {
       var watchFn = jasmine.createSpy();
       var listenerFn = function() { };
@@ -39,6 +40,7 @@ describe('Scope', function() {
 
       expect(watchFn).toHaveBeenCalledWith(scope);
     });
+
 
     it('calls the listener function when the watched value changes', function() {
       scope.someValue = 'a';
@@ -64,6 +66,7 @@ describe('Scope', function() {
       expect(scope.counter).toBe(2);
     });
 
+
     it('calls listener when watch value is first undefined', function() {
       scope.counter = 0;
 
@@ -77,21 +80,30 @@ describe('Scope', function() {
     });
 
 
+    it('calls listener with new value as old value the first time', function() {
+      scope.someValue = 123;
+      var oldValueGiven;
 
-  it('calls listener with new value as old value the first time', function() {
-    scope.someValue = 123;
-    var oldValueGiven;
+      scope.$watch(
+        function(scope) { return scope.someValue; },
+        function(newValue, oldValue, scope) { oldValueGiven = oldValue; }
+      );
 
-    scope.$watch(
-      function(scope) { return scope.someValue; },
-      function(newValue, oldValue, scope) { oldValueGiven = oldValue; }
-    );
+      scope.$digest();
+      expect(oldValueGiven).toBe(123);
+    });
 
-    scope.$digest();
-    expect(oldValueGiven).toBe(123);
+
+    it('may have watchers that omit the listener function', function() {
+      var watchFn = jasmine.createSpy().and.returnValue('something');
+      scope.$watch(watchFn);
+
+      scope.$digest();
+
+      expect(watchFn).toHaveBeenCalled();
+    });
+
+
+
   });
-
-
-
-});
 });
