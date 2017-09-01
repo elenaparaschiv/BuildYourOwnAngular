@@ -4,7 +4,7 @@ This repository contains the AngularJS implementation built during the course of
 
 ## Code
 
-
+```
 ## Chapter 1.2
 __Checking for Dirty Values__
 Inside the watch func we pass in the scope
@@ -22,5 +22,5 @@ Gains: "binding loss"
  Troubles: the method loses its implicit binding and this goes back to the default window case.
 
 
-
+```
 
