@@ -4,7 +4,6 @@ This repository contains the AngularJS implementation built during the course of
 
 ## Code
 
-```
 
 ## Chapter 1.2
 __Checking for Dirty Values__
@@ -25,4 +24,3 @@ Gains: "binding loss"
 
 
 
-```
