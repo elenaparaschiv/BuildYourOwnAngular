@@ -1,26 +1,54 @@
 'use strict';
 var _ = require('lodash');
 
+function initWatchVal() { }
+
 function Scope() {
   this.$$watchers = [];
 }
 
-// We define watch func.It will take 2 funcs as arguments and store them in $$watchers array
-// We want every object to have the $watch func, so we add it to prototype of Scope
+
 Scope.prototype.$watch = function(watchFn, listenerFn) {
   var watcher = {
     watchFn: watchFn,
-    listenerFn: listenerFn
+    listenerFn: listenerFn || function() { },
+    last: initWatchVal
   };
   this.$$watchers.push(watcher);
 };
 
-// It iterates over all registered watchers and calls their listener functions
-Scope.prototype.$digest = function() {
+
+Scope.prototype.$$digestOnce = function() {
+  var self = this;
+  var newValue, oldValue, dirty;
   _.forEach(this.$$watchers, function(watcher) {
-    watcher.listenerFn();
+    newValue = watcher.watchFn(self);
+    oldValue = watcher.last;
+    if(newValue !== oldValue) {
+      watcher.last = newValue;
+      watcher.listenerFn(newValue,
+        (oldValue === initWatchVal ? newValue : oldValue),
+         self);
+        dirty = true;
+    }
   });
+  return dirty;
 };
+
+
+Scope.prototype.$digest = function() {
+  // a Total Time to Live
+  var ttl = 10;
+  var dirty;
+  do {
+    dirty = this.$$digestOnce();
+    if (dirty && !(ttl--)) {
+      throw "10 digest iterations reached";
+    }
+  } while (dirty);
+};
+
+
 
 
 module.exports = Scope;
