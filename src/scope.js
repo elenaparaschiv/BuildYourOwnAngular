@@ -8,11 +8,12 @@ function Scope() {
   this.$$lastDirtyWatch = null;
 }
 
-
-Scope.prototype.$watch = function(watchFn, listenerFn) {
+// redefine $watch to take the boolean flag and store it in the watcher
+Scope.prototype.$watch = function(watchFn, listenerFn, valueEq) {
   var watcher = {
     watchFn: watchFn,
     listenerFn: listenerFn || function() { },
+    valueEq: !!valueEq,
     last: initWatchVal
   };
   this.$$watchers.push(watcher);
@@ -53,6 +54,19 @@ Scope.prototype.$digest = function() {
     }
   } while (dirty);
 };
+
+Scope.prototype.$$areEqual = function(newValue, oldValue, valueEq) {
+  if (valueEq) {
+    return _.isEqual(newValue, oldValue);
+  } else {
+    return newValue === oldValue;
+  }
+}
+
+
+
+
+
 
 
 
