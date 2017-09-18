@@ -14,7 +14,7 @@
     "phantomjs-prebuilt": "^2.1.7",
     "sinon": "^1.17.7",
     "uglifyjs": "^2.4.10",
-    "watchify": "^3.7.0"
+    "watchify": "^3.9.0"
   },
   "dependencies": {
     "jquery": "^2.2.4",

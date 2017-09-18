@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('lodash');
 var Scope = require('../src/scope');
 
 describe('Scope', function() {
@@ -150,6 +151,7 @@ describe('Scope', function() {
   // What happens if there are 2 watches looking at changes made by each other?
 
   it("gives up on watches after 10 iterations", function() {
+
     scope.counterA = 0;
     scope.counterB = 0;
 
@@ -172,8 +174,52 @@ describe('Scope', function() {
   });
 
 
+  it("ends the digest when the last watch is clean", function() {
 
+    scope.array = _.range(100);
+    var watchExecutions = 0;
 
+    _.times(100, function(i) {
+      scope.$watch(
+        function(scope) {
+          watchExecutions++;
+          return scope.array[i];
+        },
+        function(newValue, oldValue, scope) {
+
+        }
+      );
+    });
+
+    scope.$digest();
+    expect(watchExecutions).toBe(200);
+
+    scope.array[0] = 420;
+    scope.$digest();
+    expect(watchExecutions).toBe(301);
+
+  });
+
+  it("does not end digest so that the new watches are not run", function() {
+    scope.aValue = 'abc';
+    scope.counter = 0;
+
+    scope.$watch(
+      function(scope) { return scope.aValue; },
+      function(newValue, oldValue, scope) {
+        scope.$watch(
+          function(scope) { return scope.aValue; },
+          function(newValue, oldValue, scope) {
+            scope.counter++;
+          }
+        );
+      }
+    );
+
+    scope.$digest();
+    expect(scope.counter).toBe(1);
+
+  });
 
 
 
