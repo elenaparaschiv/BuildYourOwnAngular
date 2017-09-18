@@ -4,18 +4,11 @@ This repository contains the AngularJS implementation built during the course of
 
 ## Code
 
-<<<<<<< HEAD
-To make following along easier, branches are ordered to match the order of events in the book. Each branch references the corresponding section title in the book.
-=======
 ```
 
-## Chapter 1.7
-__Short Circuiting The Digest When the Last Watch is clean__
+## Chapter 1.8
+__Value-Based Dirty-Checking__
 
-Keep track of he last watch we have seen that it was dirty.
-When we encounter a clean watch, we check whether it's also the last watch we have seen it was dirty.
-If so, a full round passed where no watch has been dirty.
-exit the current round
 
 
 
