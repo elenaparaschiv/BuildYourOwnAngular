@@ -1,4 +1,5 @@
 'use strict';
+
 var _ = require('lodash');
 
 function initWatchVal() { }
@@ -8,7 +9,6 @@ function Scope() {
   this.$$lastDirtyWatch = null;
 }
 
-// redefine $watch to take the boolean flag and store it in the watcher
 Scope.prototype.$watch = function(watchFn, listenerFn, valueEq) {
   var watcher = {
     watchFn: watchFn,
@@ -17,9 +17,10 @@ Scope.prototype.$watch = function(watchFn, listenerFn, valueEq) {
     last: initWatchVal
   };
   this.$$watchers.push(watcher);
-  this.$$lastDirtyWatch = null;
 };
 
+// digestOnce runs all the watchers once >
+// return a Boolean val / that determines whether there were changes/not
 
 Scope.prototype.$$digestOnce = function() {
   var self = this;
@@ -27,13 +28,16 @@ Scope.prototype.$$digestOnce = function() {
   _.forEach(this.$$watchers, function(watcher) {
     newValue = watcher.watchFn(self);
     oldValue = watcher.last;
-    if(newValue !== oldValue) {
-      self.$$lastDirtyWatch = watcher;
-      watcher.last = newValue;
+    // if (newValue !== oldValue) {
+      if (!self.$$areEqual(newValue, oldValue, watcher.valueEq)) {
+        self.$$lastDirtyWatch = watcher;
+        watcher.last = (watcher.valueEq ? _.cloneDeep(newValue) : newValue);
+      // watcher.last = newValue;
       watcher.listenerFn(newValue,
         (oldValue === initWatchVal ? newValue : oldValue),
-         self);
-        dirty = true;
+        self
+      );
+      dirty = true;
     } else if (self.$$lastDirtyWatch === watcher) {
       return false;
     }
@@ -41,34 +45,33 @@ Scope.prototype.$$digestOnce = function() {
   return dirty;
 };
 
-// Whenever the digest begins we set the field to null
-Scope.prototype.$digest = function() {
-  // a Total Time to Live
-  var ttl = 10;
-  var dirty;
-  this.$$lastDirtyWatch = null;
-  do {
-    dirty = this.$$digestOnce();
-    if (dirty && !(ttl--)) {
-      throw "10 digest iterations reached";
+// $digest runs the "outer loop" calling $$digestOnce as long as changes keep occuring
+
+  Scope.prototype.$digest = function() {
+    var ttl = 10;
+    var dirty;
+    this.$$lastDirtyWatch = null;
+    do {
+      dirty = this.$$digestOnce();
+      if(dirty && !(ttl--)) {
+        throw "10 digest iterations reached";
+      }
+    } while (dirty);
+  };
+
+  Scope.prototype.$$areEqual = function(newValue, oldValue, valueEq) {
+    if (valueEq) {
+      return _.isEqual(newValue, oldValue);
+    } else {
+      return newValue === oldValue ||
+      (typeof newValue === 'number' && typeof oldValue ==='number' &&
+       isNaN(newValue) && isNaN(oldValue));
     }
-  } while (dirty);
-};
-
-Scope.prototype.$$areEqual = function(newValue, oldValue, valueEq) {
-  if (valueEq) {
-    return _.isEqual(newValue, oldValue);
-  } else {
-    return newValue === oldValue;
-  }
-}
-
-
-
-
+  };
 
 
 
 
 
 module.exports = Scope;
+//
