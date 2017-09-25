@@ -4,18 +4,11 @@ This repository contains the AngularJS implementation built during the course of
 
 ## Code
 
-## Chapter 1.11 apply Integrating External Code with Digest Cycle
-Definition : apply is the standard way to integrate external libraries to Angular.
+## Chapter 1.12 evalAsync - Deferred Execution
+Integrate the delayed function to the digest cycle with $apply.
+$evalAsync
+  input: takes a function and schedules it to run later bust still during the ongoing digest.
+You can for example, defer some code from within a watch listenerFn, knowing that while the code is deferred, it'll still be invoked within the current digest iteration.
 
-Function signature:
-  Input: takes a function as an argument
-  Output: kickstarts the digest cycle by invoking digest.
-
-Big idea of apply:
-  We execute some code  that isn't aware of Angular.
-  The code may still change things on the scope.
-  & as long as we wrap the code in $apply, we can be sure that
-  any watches on the scope will pick up on those changes.
-
-  = this process is also knows as integrating code to angular lifecycle.
-  
+Reason why use $evalAsync instead of setTimeOut():
+  Dont let the browser render DOM changes that are going to be immediately overridden anyway.
