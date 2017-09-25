@@ -69,6 +69,10 @@ Scope.prototype.$$digestOnce = function() {
     }
   };
 
+  Scope.prototype.$eval = function(expr, locals) {
+    return expr(this, locals);
+  };
+
 
 
 
