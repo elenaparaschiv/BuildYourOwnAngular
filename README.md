@@ -4,11 +4,7 @@ This repository contains the AngularJS implementation built during the course of
 
 ## Code
 
-## Chapter 1.12 evalAsync - Deferred Execution
-Integrate the delayed function to the digest cycle with $apply.
-$evalAsync
-  input: takes a function and schedules it to run later bust still during the ongoing digest.
-You can for example, defer some code from within a watch listenerFn, knowing that while the code is deferred, it'll still be invoked within the current digest iteration.
+## Chapter 1.13 Scheduling evalAsync from Watch Functions
 
-Reason why use $evalAsync instead of setTimeOut():
-  Dont let the browser render DOM changes that are going to be immediately overridden anyway.
+In 1.12 we saw how to schedule a function from a listener function (using $evalAsync).
+Now we look at > scheduling $evalAsync from a watch function.

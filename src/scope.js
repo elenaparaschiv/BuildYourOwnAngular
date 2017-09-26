@@ -46,24 +46,24 @@ Scope.prototype.$$digestOnce = function() {
   return dirty;
 };
 
-// $digest runs the "outer loop" calling $$digestOnce as long as changes keep occuring
 
   Scope.prototype.$digest = function() {
     var ttl = 10;
     var dirty;
     this.$$lastDirtyWatch = null;
     do {
-      // added
+
       while (this.$$asyncQueue.length) {
-        var asyncTask = this.$$asyncQueue.shift();
+        var asyncTask = this.$$asyncQueue.shift(); // shift reduces the elements 1 by 1/
         asyncTask.scope.$eval(asyncTask.expression);
       }
-      // end added
       dirty = this.$$digestOnce();
-      if(dirty && !(ttl--)) {
+      // pay attention here
+      if ((dirty || this.$$asyncQueue.length) && !(ttl--)) {
         throw "10 digest iterations reached";
       }
-    } while (dirty);
+      // pay attention here
+    } while (dirty || this.$$asyncQueue.length);
   };
 
   Scope.prototype.$$areEqual = function(newValue, oldValue, valueEq) {
