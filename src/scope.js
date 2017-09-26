@@ -8,7 +8,20 @@ function Scope() {
   this.$$watchers = [];
   this.$$lastDirtyWatch = null;
   this.$$asyncQueue = [];
+  this.$$phase = null;
 }
+// added phases
+Scope.prototype.$beginPhase = function(phase) {
+  if (this.$$phase) {
+    throw this.$$phase + ' already in progress ';
+  }
+  this.$$phase = phase;
+};
+
+Scope.prototype.$clearPhase = function() {
+  this.$$phase = null;
+};
+// end added phases
 
 Scope.prototype.$watch = function(watchFn, listenerFn, valueEq) {
   var watcher = {
@@ -20,8 +33,6 @@ Scope.prototype.$watch = function(watchFn, listenerFn, valueEq) {
   this.$$watchers.push(watcher);
 };
 
-// digestOnce runs all the watchers once >
-// return a Boolean val / that determines whether there were changes/not
 
 Scope.prototype.$$digestOnce = function() {
   var self = this;
@@ -51,6 +62,8 @@ Scope.prototype.$$digestOnce = function() {
     var ttl = 10;
     var dirty;
     this.$$lastDirtyWatch = null;
+    // added
+    this.$beginPhase("$digest");
     do {
 
       while (this.$$asyncQueue.length) {
@@ -60,10 +73,14 @@ Scope.prototype.$$digestOnce = function() {
       dirty = this.$$digestOnce();
       // pay attention here
       if ((dirty || this.$$asyncQueue.length) && !(ttl--)) {
+        // added
+        this.$clearPhase();
         throw "10 digest iterations reached";
       }
       // pay attention here
     } while (dirty || this.$$asyncQueue.length);
+    // added
+    this.$clearPhase();
   };
 
   Scope.prototype.$$areEqual = function(newValue, oldValue, valueEq) {
@@ -82,14 +99,24 @@ Scope.prototype.$$digestOnce = function() {
 
   Scope.prototype.$apply = function(expr) {
     try {
+      this.$beginPhase("$apply");
       return this.$eval(expr);
     } finally {
+      this.$clearPhase();
       this.$digest();
     }
   };
 
   Scope.prototype.$evalAsync = function(expr) {
-    this.$$asyncQueue.push({scope: this, expression: expr});
+    var self = this;
+    if (!self.$$phase && !self.$$asyncQueue.length) {
+      setTimeout(function() {
+        if (self.$$asyncQueue.length) {
+          self.$digest();
+        }
+      }, 0);
+    }
+    self.$$asyncQueue.push({scope: self, expression: expr});
   };
 
 

@@ -4,7 +4,4 @@ This repository contains the AngularJS implementation built during the course of
 
 ## Code
 
-## Chapter 1.13 Scheduling evalAsync from Watch Functions
-
-In 1.12 we saw how to schedule a function from a listener function (using $evalAsync).
-Now we look at > scheduling $evalAsync from a watch function.
+## Chapter 1.14 Scope Phases
