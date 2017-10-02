@@ -4,17 +4,14 @@ This repository contains the AngularJS implementation built during the course of
 
 ## Code
 
-## Chapter 1.15 Coallescing $apply Invocations - $applyAsync
+## Chapter 1.16 Running Code After a Digest - $$postDigest
+One more way to attach code to run in relation to digest cycle, by scheduling a $$postDigest function.
 
-$evalAsync use cases: - defer work from inside a digest, (X)
-                      - or from outside a digest.
+Just like $evalAsync and $applyAsync, $postDigest schedules a function to run "later".
+Specifically, the function will be run after the next digest has finished.
 
-The digest-launching setTimeout call  prevents confusion if someone calls $evalAsync from outside a digest.
+Like $evalAsync, a fn executed with $$postDigest is executed just once.
 
-For use case of $applying a function from outside a digest loop asynchronously, there is $applyAsync.
-Purpose: similar to $apply > Integrate code that's not aware of Angular digest cycle.
-         unlike $apply     > does not evaluate the given func immediately
-                             does not launch digest immediately.
-
-
-$applyAsync: useful for anything that benefits from coalescing digests. (i.e. coallescing HTTP responses in a single $digest).                            
+Unlike $evalAsync or $applyAsync,
+scheduling a $$postDigest fn does not cause a digest to be scheduled,
+so the fn execution is delayed until the digest happens for some other reason.
