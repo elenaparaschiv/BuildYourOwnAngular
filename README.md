@@ -7,11 +7,13 @@ This repository contains the AngularJS implementation built during the course of
 ## Chapter 2 - Scope inheritance
 
 - [x] 1.The Root Scope
-- [x] 1.Making a Child Scope
+- [x] 2.Making a Child Scope
+- [x] 3.Attribute Shadowing
 
 #Notes:
 
 Uses JS prototype inheritance:
+
 ```
 Scope.prototype.$new = function() {
   var ChildScope = function() { };
